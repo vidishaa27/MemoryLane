@@ -72,16 +72,19 @@ flask run
 ## Project Structure
 
 ```
-memorylane/
-├── app/
-│   ├── static/        # CSS, JS, images
-│   ├── templates/      # HTML templates
-│   ├── models.py       # Database models
-│   ├── routes.py        # App routes
-│   └── __init__.py
-├── migrations/          # Database migrations
-├── requirements.txt
-├── .env.example
+MemoryLane/
+├── backend/
+│   ├── app.py            # Flask app and routes
+│   ├── database.db       # SQL database
+│   └── requirements.txt  # Python dependencies
+├── frontend/
+│   ├── create-magazine.html  # Page for creating a magazine
+│   ├── index.html             # Home / landing page
+│   ├── script.js               # Frontend logic
+│   └── style.css               # Styling
+├── .gitignore
+├── image.png
+├── LICENSE
 └── README.md
 ```
 
