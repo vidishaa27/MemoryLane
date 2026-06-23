@@ -27,3 +27,65 @@ if (titleDisplay) {
     descriptionDisplay.textContent = localStorage.getItem('magazineDescription');
 }   
 
+const pageForm =
+    document.getElementById("pageForm");
+
+if (pageForm) {
+
+    pageForm.addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        const pageTitle =
+            document.getElementById("pageTitle").value;
+
+        const pageContent =
+            document.getElementById("pageContent").value;
+
+        let pages =
+            JSON.parse(localStorage.getItem("pages")) || [];
+
+        pages.push({
+            title: pageTitle,
+            content: pageContent
+        });
+
+        localStorage.setItem(
+            "pages",
+            JSON.stringify(pages)
+        );
+
+        alert("Page Added!");
+
+        pageForm.reset();
+
+    });
+
+}
+
+const pagesContainer =
+    document.getElementById("pagesContainer");
+
+if (pagesContainer) {
+
+    let pages =
+        JSON.parse(localStorage.getItem("pages")) || [];
+
+    pages.forEach(function(page) {
+
+        const pageDiv =
+            document.createElement("div");
+
+        pageDiv.classList.add("card");
+
+        pageDiv.innerHTML = `
+            <h2>${page.title}</h2>
+            <p>${page.content}</p>
+        `;
+
+        pagesContainer.appendChild(pageDiv);
+
+    });
+
+}
+
