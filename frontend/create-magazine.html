@@ -18,16 +18,16 @@
 
         <h1>Create Magazine</h1>
 
-        <form class="card">
+        <form class="card" id="magazineForm">
 
             <label>Magazine Title</label>
-            <input type="text">
+            <input type="text" id="title" required>
 
             <label>Description</label>
-            <textarea rows="4"></textarea>
+            <textarea rows="4" id="description"></textarea>
 
             <label>Cover Image URL</label>
-            <input type="text">
+            <input type="text" id="cover">
 
             <button type="submit">
                 Create
@@ -36,6 +36,8 @@
         </form>
 
     </div>
+
+    <script src="script.js"></script>
 
 </body>
 </html>
