@@ -42,12 +42,20 @@ if (pageForm) {
         const pageContent =
             document.getElementById("pageContent").value;
 
+        const pageImage =
+        document.getElementById("pageImage").value;
+
+        const pageSong =
+        document.getElementById("pageSong").value;
+
         let pages =
             JSON.parse(localStorage.getItem("pages")) || [];
 
         pages.push({
             title: pageTitle,
-            content: pageContent
+            content: pageContent,
+            image: pageImage,
+            song: pageSong
         });
 
         localStorage.setItem(
@@ -79,9 +87,20 @@ if (pagesContainer) {
         pageDiv.classList.add("card");
 
         pageDiv.innerHTML = `
-            <h2>${page.title}</h2>
-            <p>${page.content}</p>
-        `;
+    <h2>${page.title}</h2>
+
+    <img
+        src="${page.image}"
+        alt="${page.title}"
+        class="page-image">
+
+    <p>${page.content}</p>
+
+    <a href="${page.song}"
+       target="_blank">
+       🎵 Listen to Song
+    </a>
+`;
 
         pagesContainer.appendChild(pageDiv);
 
