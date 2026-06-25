@@ -84,7 +84,7 @@ if (pagesContainer) {
         const pageDiv =
             document.createElement("div");
 
-        pageDiv.classList.add("card");
+        pageDiv.classList.add("page");
 
         pageDiv.innerHTML = `
     <h2>${page.title}</h2>
@@ -97,8 +97,9 @@ if (pagesContainer) {
     <p>${page.content}</p>
 
     <a href="${page.song}"
-       target="_blank">
-       🎵 Listen to Song
+        target="_blank"
+        class="song-btn">
+        🎵 Listen to Song
     </a>
 `;
 
