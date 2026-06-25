@@ -25,7 +25,7 @@ if (titleDisplay) {
     titleDisplay.textContent = localStorage.getItem('magazineTitle');
 
     descriptionDisplay.textContent = localStorage.getItem('magazineDescription');
-}   
+}
 
 const pageForm =
     document.getElementById("pageForm");
@@ -43,10 +43,10 @@ if (pageForm) {
             document.getElementById("pageContent").value;
 
         const pageImage =
-        document.getElementById("pageImage").value;
+            document.getElementById("pageImage").value;
 
         const pageSong =
-        document.getElementById("pageSong").value;
+            document.getElementById("pageSong").value;
 
         let pages =
             JSON.parse(localStorage.getItem("pages")) || [];
@@ -79,14 +79,48 @@ if (pagesContainer) {
     let pages =
         JSON.parse(localStorage.getItem("pages")) || [];
 
-    pages.forEach(function(page) {
+    if (pages.length === 0) {
 
-        const pageDiv =
+        pagesContainer.innerHTML = `
+        <div class="page">
+            <h2>No Pages Yet</h2>
+            <p>
+                Start adding memories to your magazine.
+            </p>
+        </div>
+    `;
+
+    } else {
+
+        const magazineTitle =
+            localStorage.getItem("magazineTitle") || "Untitled Magazine";
+
+        const magazineDescription =
+            localStorage.getItem("magazineDescription") || "";
+
+        const cover =
             document.createElement("div");
 
-        pageDiv.classList.add("page");
+        cover.classList.add("cover-page");
 
-        pageDiv.innerHTML = `
+        cover.innerHTML = `
+        <h1>${magazineTitle}</h1>
+        <p>${magazineDescription}</p>
+`;
+
+        pagesContainer.appendChild(cover);
+
+        pages.forEach(function (page, index) {
+
+            const pageDiv =
+                document.createElement("div");
+
+            pageDiv.classList.add("page");
+
+            pageDiv.innerHTML = `
+            <p class="page-number">
+        Page ${index + 1}
+    </p>
     <h2>${page.title}</h2>
 
     <img
@@ -103,9 +137,9 @@ if (pagesContainer) {
     </a>
 `;
 
-        pagesContainer.appendChild(pageDiv);
+            pagesContainer.appendChild(pageDiv);
 
-    });
+        });
 
+    }
 }
-
