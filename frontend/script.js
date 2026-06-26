@@ -219,6 +219,11 @@ if (pagesContainer) {
 
             button.addEventListener("click", () => {
 
+                const confirmDelete =
+                    confirm("Delete this page?");
+
+                if (!confirmDelete) return;
+
                 const index = button.dataset.index;
 
                 let pages =
