@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Magazine</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <nav>
@@ -26,6 +28,14 @@
             <label>Description</label>
             <textarea rows="4" id="description"></textarea>
 
+            <label>Theme</label>
+
+            <select id="magazineTheme">
+                <option value="scrapbook">Scrapbook</option>
+                <option value="vintage">Vintage</option>
+                <option value="modern">Modern</option>
+            </select>
+
             <label>Cover Image URL</label>
             <input type="text" id="cover">
 
@@ -40,4 +50,5 @@
     <script src="script.js"></script>
 
 </body>
+
 </html>

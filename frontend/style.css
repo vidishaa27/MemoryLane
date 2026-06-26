@@ -168,3 +168,45 @@ button{
     font-size: 0.9rem;
     margin-bottom: 10px;
 }
+
+/* Scrapbook */
+body.scrapbook-theme {
+    background: linear-gradient(to right, #fff4e6, #ffd6ba);
+    color: #333;
+}
+
+/* Vintage */
+body.vintage-theme {
+    background: linear-gradient(to right, #d9c7a3, #b89b72);
+    color: #3b2d20;
+}
+
+/* Modern */
+body.modern-theme {
+    background: linear-gradient(to right, #dfe9f3, #ffffff);
+    color: #222;
+}
+
+body.scrapbook-theme .page {
+    border-left: 6px solid #ff8fab;
+}
+
+body.vintage-theme .page {
+    border-left: 6px solid #8b6f47;
+}
+
+body.modern-theme .page {
+    border-top: 6px solid #222;
+}
+
+body.scrapbook-theme {
+    font-family: "Trebuchet MS", sans-serif;
+}
+
+body.vintage-theme {
+    font-family: Georgia, serif;
+}
+
+body.modern-theme {
+    font-family: Arial, sans-serif;
+}
