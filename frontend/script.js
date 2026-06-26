@@ -208,10 +208,72 @@ if (pagesContainer) {
             🗑 Delete
         </button>
 
+        <button
+            class="move-up-btn">
+            ⬆ Move Up
+        </button>
+
+        <button
+            class="move-down-btn">
+            ⬇ Move Down
+        </button>
+
     </div>
 `;
 
             pagesContainer.appendChild(pageDiv);
+
+            const moveUpBtn =
+                pageDiv.querySelector(".move-up-btn");
+
+            const moveDownBtn =
+                pageDiv.querySelector(".move-down-btn");
+
+            moveUpBtn.addEventListener("click", function () {
+
+                if (index === 0) return;
+
+                const temp = pages[index];
+
+                pages[index] = pages[index - 1];
+
+                pages[index - 1] = temp;
+
+                localStorage.setItem(
+                    "pages",
+                    JSON.stringify(pages)
+                );
+
+                location.reload();
+
+            });
+
+            moveDownBtn.addEventListener("click", function () {
+
+                if (index === pages.length - 1) return;
+
+                const temp = pages[index];
+
+                pages[index] = pages[index + 1];
+
+                pages[index + 1] = temp;
+
+                localStorage.setItem(
+                    "pages",
+                    JSON.stringify(pages)
+                );
+
+                location.reload();
+
+            });
+
+            if (index === 0) {
+                moveUpBtn.disabled = true;
+            }
+
+            if (index === pages.length - 1) {
+                moveDownBtn.disabled = true;
+            }
 
         });
 
