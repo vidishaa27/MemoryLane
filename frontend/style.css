@@ -210,3 +210,28 @@ body.vintage-theme {
 body.modern-theme {
     font-family: Arial, sans-serif;
 }
+
+.page-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.edit-btn {
+    background: #99c49a;
+    color: white;
+}
+
+.delete-btn {
+    background: #b87d7c;
+    color: white;
+}
