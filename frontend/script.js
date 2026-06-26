@@ -128,9 +128,10 @@ if (pagesContainer) {
             pageDiv.classList.add("page");
 
             pageDiv.innerHTML = `
-            <p class="page-number">
+    <p class="page-number">
         Page ${index + 1}
     </p>
+
     <h2>${page.title}</h2>
 
     <img
@@ -145,11 +146,57 @@ if (pagesContainer) {
         class="song-btn">
         🎵 Listen to Song
     </a>
+
+    <div class="page-actions">
+
+        <button
+            class="edit-btn"
+            onclick="editPage(${index})">
+            ✏️ Edit
+        </button>
+
+        <button
+            class="delete-btn"
+            data-index="${index}">
+            🗑 Delete
+        </button>
+
+    </div>
 `;
 
             pagesContainer.appendChild(pageDiv);
 
         });
 
+        document.querySelectorAll(".delete-btn").forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const index = button.dataset.index;
+
+                let pages =
+                    JSON.parse(localStorage.getItem("pages")) || [];
+
+                pages.splice(index, 1);
+
+                localStorage.setItem(
+                    "pages",
+                    JSON.stringify(pages)
+                );
+
+                location.reload();
+
+            });
+
+        });
+
     }
+}
+
+function editPage(index) {
+
+    localStorage.setItem("editingPage", index);
+
+    window.location.href = "create-page.html";
+
 }
