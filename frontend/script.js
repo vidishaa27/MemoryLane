@@ -162,7 +162,14 @@ if (pagesContainer) {
 
         cover.innerHTML = `
         <h1>${magazineTitle}</h1>
+
         <p>${magazineDescription}</p>
+
+        <a
+            href="create-page.html"
+            class="primary-btn">
+            + Add New Page
+        </a>
 `;
 
         pagesContainer.appendChild(cover);
@@ -312,5 +319,78 @@ function editPage(index) {
     localStorage.setItem("editingPage", index);
 
     window.location.href = "create-page.html";
+
+}
+
+const magazinesContainer =
+    document.getElementById("magazinesContainer");
+
+if (magazinesContainer) {
+
+    const title =
+        localStorage.getItem("magazineTitle");
+
+    const description =
+        localStorage.getItem("magazineDescription");
+
+    const theme =
+        localStorage.getItem("magazineTheme");
+
+    const pages =
+        JSON.parse(localStorage.getItem("pages")) || [];
+
+    document.getElementById("magazineCount").textContent =
+        title ? 1 : 0;
+
+    document.getElementById("pageCount").textContent =
+        pages.length;
+
+    const songCount =
+        pages.filter(page => page.song && page.song.trim() !== "").length;
+
+    document.getElementById("songCount").textContent =
+        songCount;
+
+    if (!title) {
+
+        magazinesContainer.innerHTML = `
+            <div class="page">
+                <h2>📖 Welcome to MemoryLane</h2>
+                <p>
+                    You haven't created any magazines yet.
+                </p>
+            </div>
+        `;
+
+    } else {
+
+        const card =
+            document.createElement("div");
+
+        card.classList.add("magazine-card");
+
+        card.innerHTML = `
+            <h2>${title}</h2>
+
+            <p>${description}</p>
+
+            <p><strong>Theme:</strong> ${theme}</p>
+
+            <p><strong>Pages:</strong> ${pages.length}</p>
+
+            <div class="page-actions">
+
+                <button
+                    onclick="window.location.href='magazine.html'"
+                    class="song-btn">
+                    📖 Open
+                </button>
+
+            </div>
+        `;
+
+        magazinesContainer.appendChild(card);
+
+    }
 
 }
