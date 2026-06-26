@@ -7,10 +7,12 @@ if (form) {
         const title = document.getElementById('title').value;
         const description = document.getElementById('description').value;
         const cover = document.getElementById('cover').value;
+        const theme = document.getElementById('magazineTheme').value;
 
         localStorage.setItem('magazineTitle', title);
         localStorage.setItem('magazineDescription', description);
         localStorage.setItem('magazineCover', cover);
+        localStorage.setItem('magazineTheme', theme);
 
         // Redirect to the magazine page
         window.location.href = 'magazine.html';
@@ -25,6 +27,14 @@ if (titleDisplay) {
     titleDisplay.textContent = localStorage.getItem('magazineTitle');
 
     descriptionDisplay.textContent = localStorage.getItem('magazineDescription');
+}
+
+const theme = localStorage.getItem("magazineTheme");
+
+console.log(theme);
+
+if (theme) {
+    document.body.classList.add(`${theme}-theme`);
 }
 
 const pageForm =
