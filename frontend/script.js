@@ -40,7 +40,41 @@ if (theme) {
 const pageForm =
     document.getElementById("pageForm");
 
+const editingIndex =
+    localStorage.getItem("editingPage");
+
 if (pageForm) {
+
+    if (editingIndex !== null) {
+
+        const pages =
+            JSON.parse(localStorage.getItem("pages")) || [];
+
+        const page =
+            pages[editingIndex];
+
+        if (page) {
+
+            document.getElementById("pageTitle").value =
+                page.title;
+
+            document.getElementById("pageContent").value =
+                page.content;
+
+            document.getElementById("pageImage").value =
+                page.image;
+
+            document.getElementById("pageSong").value =
+                page.song;
+
+            document.getElementById("pageHeading").textContent =
+                "Edit Page";
+
+            document.getElementById("pageSubmitBtn").textContent =
+                "Save Changes";
+
+        }
+    }
 
     pageForm.addEventListener("submit", function (e) {
 
@@ -61,21 +95,34 @@ if (pageForm) {
         let pages =
             JSON.parse(localStorage.getItem("pages")) || [];
 
-        pages.push({
-            title: pageTitle,
-            content: pageContent,
-            image: pageImage,
-            song: pageSong
-        });
+        if (editingIndex !== null) {
+
+            pages[editingIndex] = {
+                title: pageTitle,
+                content: pageContent,
+                image: pageImage,
+                song: pageSong
+            };
+
+        } else {
+
+            pages.push({
+                title: pageTitle,
+                content: pageContent,
+                image: pageImage,
+                song: pageSong
+            });
+
+        }
 
         localStorage.setItem(
             "pages",
             JSON.stringify(pages)
         );
 
-        alert("Page Added!");
+        localStorage.removeItem("editingPage");
 
-        pageForm.reset();
+        window.location.href = "magazine.html";
 
     });
 
