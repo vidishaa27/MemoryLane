@@ -330,3 +330,28 @@ body.modern-theme {
 .cover-page .primary-btn {
     margin-top: 25px;
 }
+
+#exportBtn {
+    display: block;
+    margin: 20px auto;
+
+    padding: 12px 24px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #4A4E69;
+    color: white;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+#exportBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
