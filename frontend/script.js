@@ -10,6 +10,7 @@ if (form) {
         const theme = document.getElementById('magazineTheme').value;
 
         localStorage.setItem('magazineTitle', title);
+
         localStorage.setItem('magazineDescription', description);
         localStorage.setItem('magazineCover', cover);
         localStorage.setItem('magazineTheme', theme);
@@ -339,6 +340,7 @@ if (magazinesContainer) {
     const pages =
         JSON.parse(localStorage.getItem("pages")) || [];
 
+
     document.getElementById("magazineCount").textContent =
         title ? 1 : 0;
 
@@ -392,5 +394,84 @@ if (magazinesContainer) {
         magazinesContainer.appendChild(card);
 
     }
+
+}
+const exportBtn = document.getElementById("exportBtn");
+
+if (exportBtn) {
+
+    exportBtn.addEventListener("click", exportMagazine);
+
+}
+
+function exportMagazine() {
+
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF();
+
+    const title =
+        localStorage.getItem("magazineTitle") || "Untitled Magazine";
+
+    const description =
+        localStorage.getItem("magazineDescription") || "";
+
+    const pages =
+        JSON.parse(localStorage.getItem("pages")) || [];
+
+    doc.setFontSize(22);
+    doc.text("MemoryLane", 20, 20);
+
+    doc.setFontSize(18);
+    doc.text(title, 20, 40);
+
+    doc.setFontSize(12);
+    doc.text(description, 20, 50);
+
+    pages.forEach((page, index) => {
+
+        doc.addPage();
+
+        doc.setFontSize(20);
+
+        doc.text(
+            `Page ${index + 1}`,
+            20,
+            20
+        );
+
+        doc.line(
+            20,
+            25,
+            190,
+            25
+        );
+
+        doc.setFontSize(16);
+        doc.text(page.title, 20, 35);
+
+        doc.setFontSize(12);
+        const wrappedContent =
+            doc.splitTextToSize(page.content, 170);
+
+        doc.text(wrappedContent, 20, 50);
+
+        if (page.song) {
+
+            doc.text("Song:", 20, 70);
+            doc.text(page.song, 40, 70);
+
+        }
+
+        if (page.image) {
+
+            doc.text("Image:", 20, 70);
+            doc.text(page.image, 40, 70);
+
+        }
+
+    });
+
+    doc.save("MemoryLane.pdf");
 
 }
