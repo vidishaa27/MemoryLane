@@ -63,10 +63,10 @@ if (pageForm) {
                 page.content;
 
             document.getElementById("pageImage").value =
-                page.image;
+                page.image_url;
 
             document.getElementById("pageSong").value =
-                page.song;
+                page.spotify_link;
 
             document.getElementById("pageHeading").textContent =
                 "Edit Page";
@@ -107,6 +107,47 @@ if (pageForm) {
 
         } else {
 
+            const pageData = {
+
+                magazine_id: 1,
+
+                page_number: pages.length + 1,
+
+                title: pageTitle,
+
+                content: pageContent,
+
+                image_url: pageImage,
+
+                spotify_link: pageSong
+
+            };
+
+            fetch("http://127.0.0.1:5000/pages", {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify(pageData)
+
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    console.log(data);
+
+                })
+                .catch(error => {
+
+                    console.error("Error:", error);
+
+                });
+
             pages.push({
                 title: pageTitle,
                 content: pageContent,
@@ -132,10 +173,9 @@ if (pageForm) {
 const pagesContainer =
     document.getElementById("pagesContainer");
 
-if (pagesContainer) {
+function renderPages(pages) {
 
-    let pages =
-        JSON.parse(localStorage.getItem("pages")) || [];
+    pagesContainer.innerHTML = "";
 
     if (pages.length === 0) {
 
@@ -190,13 +230,13 @@ if (pagesContainer) {
     <h2>${page.title}</h2>
 
     <img
-        src="${page.image}"
+        src="${page.image_url}"
         alt="${page.title}"
         class="page-image">
 
     <p>${page.content}</p>
 
-    <a href="${page.song}"
+    <a href="${page.spotify_link}"
         target="_blank"
         class="song-btn">
         🎵 Listen to Song
@@ -313,6 +353,25 @@ if (pagesContainer) {
         });
 
     }
+}
+
+if (pagesContainer) {
+
+    const currentMagazineId =
+        localStorage.getItem("currentMagazineId") || 1;
+
+    fetch(`http://127.0.0.1:5000/pages/${currentMagazineId}`)
+        .then(response => response.json())
+        .then(data => {
+
+            renderPages(data.pages);
+
+        })
+        .catch(error => {
+
+            console.error("Error loading pages:", error);
+
+        });
 }
 
 function editPage(index) {
