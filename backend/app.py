@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS pages (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    magazine_id INTEGER,
+    magazine_id INTEGER NOT NULL,
 
     page_number INTEGER,
 
@@ -41,7 +41,10 @@ CREATE TABLE IF NOT EXISTS pages (
 
     image_url TEXT,
 
-    spotify_link TEXT
+    spotify_link TEXT,
+
+    FOREIGN KEY (magazine_id)
+        REFERENCES magazines(id)
 
 )
 """)
@@ -109,7 +112,7 @@ def create_magazine():
 @app.route("/pages", methods=["POST"])
 def add_page():
 
-    data = request.json
+    data = request.get_json()
 
     cursor.execute("""
         INSERT INTO pages (
@@ -163,6 +166,55 @@ def get_pages(magazine_id):
 
     return {
         "pages": pages
+    }
+@app.route("/pages/<int:page_id>", methods=["PUT"])
+def update_page(page_id):
+
+    data = request.json
+
+    cursor.execute("""
+        UPDATE pages
+        SET
+            title = ?,
+            content = ?,
+            image_url = ?,
+            spotify_link = ?
+        WHERE id = ?
+    """, (
+        data["title"],
+        data["content"],
+        data["image_url"],
+        data["spotify_link"],
+        page_id
+    ))
+
+    connection.commit()
+
+    return {
+        "message": "Page updated successfully!"
+    }
+
+@app.route("/page/<int:page_id>", methods=["GET"])
+def get_page(page_id):
+
+    cursor.execute("""
+        SELECT * FROM pages
+        WHERE id = ?
+    """, (page_id,))
+
+    row = cursor.fetchone()
+
+    if row is None:
+        return {"message": "Page not found"}, 404
+
+    return {
+        "id": row[0],
+        "magazine_id": row[1],
+        "page_number": row[2],
+        "title": row[3],
+        "content": row[4],
+        "image_url": row[5],
+        "spotify_link": row[6]
     }
 
 if __name__ == "__main__":
