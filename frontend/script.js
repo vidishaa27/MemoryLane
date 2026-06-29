@@ -9,14 +9,23 @@ if (form) {
         const cover = document.getElementById('cover').value;
         const theme = document.getElementById('magazineTheme').value;
 
-        localStorage.setItem('magazineTitle', title);
+        const response = await fetch(
+            "http://127.0.0.1:5000/magazines",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    title,
+                    description
+                })
+            }
+        );
 
-        localStorage.setItem('magazineDescription', description);
-        localStorage.setItem('magazineCover', cover);
-        localStorage.setItem('magazineTheme', theme);
+        const result = await response.json();
 
-        // Redirect to the magazine page
-        window.location.href = 'magazine.html';
+        console.log(result);
     });
 }
 
@@ -41,40 +50,37 @@ if (theme) {
 const pageForm =
     document.getElementById("pageForm");
 
-const editingIndex =
-    localStorage.getItem("editingPage");
+const editingPageId =
+    localStorage.getItem("editingPageId");
 
 if (pageForm) {
 
-    if (editingIndex !== null) {
+    if (editingPageId !== null) {
 
-        const pages =
-            JSON.parse(localStorage.getItem("pages")) || [];
+        fetch(`http://127.0.0.1:5000/page/${editingPageId}`)
+            .then(res => res.json())
+            .then(page => {
 
-        const page =
-            pages[editingIndex];
+                document.getElementById("pageTitle").value =
+                    page.title;
 
-        if (page) {
+                document.getElementById("pageContent").value =
+                    page.content;
 
-            document.getElementById("pageTitle").value =
-                page.title;
+                document.getElementById("pageImage").value =
+                    page.image_url || "";
 
-            document.getElementById("pageContent").value =
-                page.content;
+                document.getElementById("pageSong").value =
+                    page.spotify_link || "";
 
-            document.getElementById("pageImage").value =
-                page.image || page.image_url || "";
+                document.getElementById("pageHeading").textContent =
+                    "Edit Page";
 
-            document.getElementById("pageSong").value =
-                page.song || page.spotify_link || "";
+                document.getElementById("pageSubmitBtn").textContent =
+                    "Save Changes";
 
-            document.getElementById("pageHeading").textContent =
-                "Edit Page";
+            });
 
-            document.getElementById("pageSubmitBtn").textContent =
-                "Save Changes";
-
-        }
     }
 
     pageForm.addEventListener("submit", function (e) {
@@ -97,35 +103,115 @@ if (pageForm) {
             spotify_link: pageSong
         };
 
-        fetch("http://127.0.0.1:5000/pages", {
-            method: "POST",
+        const url = editingPageId !== null
+            ? `http://127.0.0.1:5000/pages/${editingPageId}`
+            : "http://127.0.0.1:5000/pages";
+
+        const method = editingPageId !== null
+            ? "PUT"
+            : "POST";
+
+        fetch(url, {
+            method: method,
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(pageData)
         })
+
             .then(res => res.json())
             .then(data => {
+
                 console.log("Page saved:", data);
+
+                localStorage.removeItem("editingPageId");
+
                 window.location.href = "magazine.html";
+
             })
             .catch(err => {
+
                 console.error("Error saving page:", err);
+
             });
     });
-
 }
 
 const pagesContainer =
-    document.getElementById("pagesContainer");
+        document.getElementById("pagesContainer");
 
-function renderPages(pages) {
+    const currentMagazineId =
+        localStorage.getItem("currentMagazineId");
 
-    pagesContainer.innerHTML = "";
+    let magazineTitle = "";
+    let magazineDescription = "";
 
-    if (pages.length === 0) {
+    async function loadMagazine() {
 
-        pagesContainer.innerHTML = `
+        const response =
+            await fetch("http://127.0.0.1:5000/magazines");
+
+        const data =
+            await response.json();
+
+        const magazine =
+            data.magazines.find(
+                m => m.id == currentMagazineId
+            );
+
+        if (!magazine) {
+
+            alert("Magazine not found.");
+
+            window.location.href = "dashboard.html";
+
+            return;
+
+        }
+
+        magazineTitle =
+            magazine.title;
+
+        magazineDescription =
+            magazine.description;
+
+    }
+
+    async function loadPages() {
+
+        const response =
+            await fetch(
+                `http://127.0.0.1:5000/pages/${currentMagazineId}`
+            );
+
+        const data =
+            await response.json();
+
+        renderPages(data.pages);
+
+    }
+
+    if (pagesContainer) {
+
+        initializeMagazine();
+
+    }
+
+    async function initializeMagazine() {
+
+        await loadMagazine();
+
+        await loadPages();
+
+    }
+
+    function renderPages(pages) {
+
+        pagesContainer.innerHTML = "";
+
+        if (pages.length === 0) {
+
+            pagesContainer.innerHTML = `
         <div class="page">
             <h2>No Pages Yet</h2>
             <p>
@@ -134,13 +220,13 @@ function renderPages(pages) {
         </div>
     `;
 
-    } else {
-        const cover =
-            document.createElement("div");
+        } else {
+            const cover =
+                document.createElement("div");
 
-        cover.classList.add("cover-page");
+            cover.classList.add("cover-page");
 
-        cover.innerHTML = `
+            cover.innerHTML = `
         <h1>${magazineTitle}</h1>
 
         <p>${magazineDescription}</p>
@@ -152,16 +238,16 @@ function renderPages(pages) {
         </a>
 `;
 
-        pagesContainer.appendChild(cover);
+            pagesContainer.appendChild(cover);
 
-        pages.forEach(function (page, index) {
+            pages.forEach(function (page, index) {
 
-            const pageDiv =
-                document.createElement("div");
+                const pageDiv =
+                    document.createElement("div");
 
-            pageDiv.classList.add("page");
+                pageDiv.classList.add("page");
 
-            pageDiv.innerHTML = `
+                pageDiv.innerHTML = `
     <p class="page-number">
         Page ${index + 1}
     </p>
@@ -185,7 +271,7 @@ function renderPages(pages) {
 
         <button
             class="edit-btn"
-            onclick="editPage(${index})">
+            onclick="editPage(${page.id})"
             ✏️ Edit
         </button>
 
@@ -208,265 +294,280 @@ function renderPages(pages) {
     </div>
 `;
 
-            pagesContainer.appendChild(pageDiv);
+                pagesContainer.appendChild(pageDiv);
 
-            const moveUpBtn =
-                pageDiv.querySelector(".move-up-btn");
+                const moveUpBtn =
+                    pageDiv.querySelector(".move-up-btn");
 
-            const moveDownBtn =
-                pageDiv.querySelector(".move-down-btn");
+                const moveDownBtn =
+                    pageDiv.querySelector(".move-down-btn");
 
-            moveUpBtn.addEventListener("click", function () {
+                moveUpBtn.addEventListener("click", function () {
 
-                if (index === 0) return;
+                    if (index === 0) return;
 
-                const temp = pages[index];
+                    const temp = pages[index];
 
-                pages[index] = pages[index - 1];
+                    pages[index] = pages[index - 1];
 
-                pages[index - 1] = temp;
+                    pages[index - 1] = temp;
 
-                localStorage.setItem(
-                    "pages",
-                    JSON.stringify(pages)
-                );
+                    localStorage.setItem(
+                        "pages",
+                        JSON.stringify(pages)
+                    );
 
-                location.reload();
+                    location.reload();
 
-            });
+                });
 
-            moveDownBtn.addEventListener("click", function () {
+                moveDownBtn.addEventListener("click", function () {
 
-                if (index === pages.length - 1) return;
+                    if (index === pages.length - 1) return;
 
-                const temp = pages[index];
+                    const temp = pages[index];
 
-                pages[index] = pages[index + 1];
+                    pages[index] = pages[index + 1];
 
-                pages[index + 1] = temp;
+                    pages[index + 1] = temp;
 
-                localStorage.setItem(
-                    "pages",
-                    JSON.stringify(pages)
-                );
+                    localStorage.setItem(
+                        "pages",
+                        JSON.stringify(pages)
+                    );
 
-                location.reload();
+                    location.reload();
 
-            });
+                });
 
-            if (index === 0) {
-                moveUpBtn.disabled = true;
-            }
+                if (index === 0) {
+                    moveUpBtn.disabled = true;
+                }
 
-            if (index === pages.length - 1) {
-                moveDownBtn.disabled = true;
-            }
-
-        });
-
-        document.querySelectorAll(".delete-btn").forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                const confirmDelete =
-                    confirm("Delete this page?");
-
-                if (!confirmDelete) return;
-
-                const index = button.dataset.index;
-
-                pages.splice(index, 1);
-
-                localStorage.setItem(
-                    "pages",
-                    JSON.stringify(pages)
-                );
-
-                location.reload();
+                if (index === pages.length - 1) {
+                    moveDownBtn.disabled = true;
+                }
 
             });
 
-        });
+            document.querySelectorAll(".delete-btn").forEach(button => {
+
+                button.addEventListener("click", () => {
+
+                    const confirmDelete =
+                        confirm("Delete this page?");
+
+                    if (!confirmDelete) return;
+
+                    const index = button.dataset.index;
+
+                    pages.splice(index, 1);
+
+                    localStorage.setItem(
+                        "pages",
+                        JSON.stringify(pages)
+                    );
+
+                    location.reload();
+
+                });
+
+            });
+
+        }
+    }
+
+    if (pagesContainer) {
+
+        const currentMagazineId =
+            localStorage.getItem("currentMagazineId") || 1;
+
+        fetch(`http://127.0.0.1:5000/pages/${currentMagazineId}`)
+            .then(response => response.json())
+            .then(data => {
+
+                renderPages(data.pages);
+
+            })
+            .catch(error => {
+
+                console.error("Error loading pages:", error);
+
+            });
+    }
+
+    function editPage(pageId) {
+
+        localStorage.setItem(
+            "editingPageId",
+            pageId
+        );
+
+        window.location.href =
+            "create-page.html";
 
     }
-}
 
-if (pagesContainer) {
+    const magazinesContainer =
+        document.getElementById("magazinesContainer");
 
-    const currentMagazineId =
-        localStorage.getItem("currentMagazineId") || 1;
+    if (magazinesContainer) {
 
-    fetch(`http://127.0.0.1:5000/pages/${currentMagazineId}`)
-        .then(response => response.json())
-        .then(data => {
+        loadDashboard();
 
-            renderPages(data.pages);
+    }
 
-        })
-        .catch(error => {
+    async function loadDashboard() {
 
-            console.error("Error loading pages:", error);
+        const response =
+            await fetch("http://127.0.0.1:5000/magazines");
 
-        });
-}
+        const data =
+            await response.json();
 
-function editPage(index) {
+        const magazines =
+            data.magazines;
 
-    localStorage.setItem("editingPage", index);
+        // Empty state
+        if (magazines.length === 0) {
 
-    window.location.href = "create-page.html";
-
-}
-
-const magazinesContainer =
-    document.getElementById("magazinesContainer");
-
-if (magazinesContainer) {
-
-    const title =
-        localStorage.getItem("magazineTitle");
-
-    const description =
-        localStorage.getItem("magazineDescription");
-
-    const theme =
-        localStorage.getItem("magazineTheme");
-
-    const pages =
-        JSON.parse(localStorage.getItem("pages")) || [];
-
-
-    document.getElementById("magazineCount").textContent =
-        title ? 1 : 0;
-
-    document.getElementById("pageCount").textContent =
-        pages.length;
-
-    const songCount =
-        pages.filter(page => page.song && page.song.trim() !== "").length;
-
-    document.getElementById("songCount").textContent =
-        songCount;
-
-    if (!title) {
-
-        magazinesContainer.innerHTML = `
+            magazinesContainer.innerHTML = `
             <div class="page">
                 <h2>📖 Welcome to MemoryLane</h2>
+
                 <p>
                     You haven't created any magazines yet.
                 </p>
             </div>
         `;
 
-    } else {
+            return;
 
-        const card =
-            document.createElement("div");
+        }
 
-        card.classList.add("magazine-card");
+        document.getElementById("magazineCount").textContent =
+            magazines.length;
 
-        card.innerHTML = `
-            <h2>${title}</h2>
+        document.getElementById("pageCount").textContent = "-";
 
-            <p>${description}</p>
+        document.getElementById("songCount").textContent = "-";
 
-            <p><strong>Theme:</strong> ${theme}</p>
+        magazines.forEach((magazine) => {
 
-            <p><strong>Pages:</strong> ${pages.length}</p>
+            const card =
+                document.createElement("div");
 
-            <div class="page-actions">
+            card.classList.add("magazine-card");
 
-                <button
-                    onclick="window.location.href='magazine.html'"
-                    class="song-btn">
-                    📖 Open
-                </button>
+            card.innerHTML = `
+        <h2>${magazine.title}</h2>
 
-            </div>
-        `;
+        <p>${magazine.description}</p>
 
-        magazinesContainer.appendChild(card);
+        <div class="page-actions">
+
+            <button
+                class="song-btn"
+                onclick="openMagazine(${magazine.id})">
+                📖 Open
+            </button>
+
+        </div>
+    `;
+
+            magazinesContainer.appendChild(card);
+
+        });
+    }
+
+    const exportBtn = document.getElementById("exportBtn");
+
+    if (exportBtn) {
+
+        exportBtn.addEventListener("click", exportMagazine);
 
     }
 
-}
-const exportBtn = document.getElementById("exportBtn");
+    function exportMagazine() {
 
-if (exportBtn) {
+        const { jsPDF } = window.jspdf;
 
-    exportBtn.addEventListener("click", exportMagazine);
+        const doc = new jsPDF();
 
-}
+        const title =
+            localStorage.getItem("magazineTitle") || "Untitled Magazine";
 
-function exportMagazine() {
+        const description =
+            localStorage.getItem("magazineDescription") || "";
 
-    const { jsPDF } = window.jspdf;
+        const pages =
+            JSON.parse(localStorage.getItem("pages")) || [];
 
-    const doc = new jsPDF();
+        doc.setFontSize(22);
+        doc.text("MemoryLane", 20, 20);
 
-    const title =
-        localStorage.getItem("magazineTitle") || "Untitled Magazine";
-
-    const description =
-        localStorage.getItem("magazineDescription") || "";
-
-    const pages =
-        JSON.parse(localStorage.getItem("pages")) || [];
-
-    doc.setFontSize(22);
-    doc.text("MemoryLane", 20, 20);
-
-    doc.setFontSize(18);
-    doc.text(title, 20, 40);
-
-    doc.setFontSize(12);
-    doc.text(description, 20, 50);
-
-    pages.forEach((page, index) => {
-
-        doc.addPage();
-
-        doc.setFontSize(20);
-
-        doc.text(
-            `Page ${index + 1}`,
-            20,
-            20
-        );
-
-        doc.line(
-            20,
-            25,
-            190,
-            25
-        );
-
-        doc.setFontSize(16);
-        doc.text(page.title, 20, 35);
+        doc.setFontSize(18);
+        doc.text(title, 20, 40);
 
         doc.setFontSize(12);
-        const wrappedContent =
-            doc.splitTextToSize(page.content, 170);
+        doc.text(description, 20, 50);
 
-        doc.text(wrappedContent, 20, 50);
+        pages.forEach((page, index) => {
 
-        if (page.song) {
+            doc.addPage();
 
-            doc.text("Song:", 20, 70);
-            doc.text(page.song, 40, 70);
+            doc.setFontSize(20);
 
-        }
+            doc.text(
+                `Page ${index + 1}`,
+                20,
+                20
+            );
 
-        if (page.image) {
+            doc.line(
+                20,
+                25,
+                190,
+                25
+            );
 
-            doc.text("Image:", 20, 70);
-            doc.text(page.image, 40, 70);
+            doc.setFontSize(16);
+            doc.text(page.title, 20, 35);
 
-        }
+            doc.setFontSize(12);
+            const wrappedContent =
+                doc.splitTextToSize(page.content, 170);
 
-    });
+            doc.text(wrappedContent, 20, 50);
 
-    doc.save("MemoryLane.pdf");
+            if (page.song) {
 
-}
+                doc.text("Song:", 20, 70);
+                doc.text(page.song, 40, 70);
+
+            }
+
+            if (page.image) {
+
+                doc.text("Image:", 20, 70);
+                doc.text(page.image, 40, 70);
+
+            }
+
+        });
+
+        doc.save("MemoryLane.pdf");
+
+    }
+
+    function openMagazine(id) {
+
+        localStorage.setItem(
+            "currentMagazineId",
+            id
+        );
+
+        window.location.href =
+            "magazine.html";
+
+    }
