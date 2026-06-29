@@ -63,10 +63,10 @@ if (pageForm) {
                 page.content;
 
             document.getElementById("pageImage").value =
-                page.image_url;
+                page.image || page.image_url || "";
 
             document.getElementById("pageSong").value =
-                page.spotify_link;
+                page.song || page.spotify_link || "";
 
             document.getElementById("pageHeading").textContent =
                 "Edit Page";
@@ -78,94 +78,40 @@ if (pageForm) {
     }
 
     pageForm.addEventListener("submit", function (e) {
-
         e.preventDefault();
 
-        const pageTitle =
-            document.getElementById("pageTitle").value;
+        const pageTitle = document.getElementById("pageTitle").value;
+        const pageContent = document.getElementById("pageContent").value;
+        const pageImage = document.getElementById("pageImage").value;
+        const pageSong = document.getElementById("pageSong").value;
 
-        const pageContent =
-            document.getElementById("pageContent").value;
+        const currentMagazineId =
+            localStorage.getItem("currentMagazineId") || 1;
 
-        const pageImage =
-            document.getElementById("pageImage").value;
+        const pageData = {
+            magazine_id: Number(currentMagazineId),
+            page_number: 0,
+            title: pageTitle,
+            content: pageContent,
+            image_url: pageImage,
+            spotify_link: pageSong
+        };
 
-        const pageSong =
-            document.getElementById("pageSong").value;
-
-        let pages =
-            JSON.parse(localStorage.getItem("pages")) || [];
-
-        if (editingIndex !== null) {
-
-            pages[editingIndex] = {
-                title: pageTitle,
-                content: pageContent,
-                image: pageImage,
-                song: pageSong
-            };
-
-        } else {
-
-            const pageData = {
-
-                magazine_id: 1,
-
-                page_number: pages.length + 1,
-
-                title: pageTitle,
-
-                content: pageContent,
-
-                image_url: pageImage,
-
-                spotify_link: pageSong
-
-            };
-
-            fetch("http://127.0.0.1:5000/pages", {
-
-                method: "POST",
-
-                headers: {
-
-                    "Content-Type": "application/json"
-
-                },
-
-                body: JSON.stringify(pageData)
-
+        fetch("http://127.0.0.1:5000/pages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(pageData)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log("Page saved:", data);
+                window.location.href = "magazine.html";
             })
-                .then(response => response.json())
-                .then(data => {
-
-                    console.log(data);
-
-                })
-                .catch(error => {
-
-                    console.error("Error:", error);
-
-                });
-
-            pages.push({
-                title: pageTitle,
-                content: pageContent,
-                image: pageImage,
-                song: pageSong
+            .catch(err => {
+                console.error("Error saving page:", err);
             });
-
-        }
-
-        localStorage.setItem(
-            "pages",
-            JSON.stringify(pages)
-        );
-
-        localStorage.removeItem("editingPage");
-
-        window.location.href = "magazine.html";
-
     });
 
 }
@@ -189,13 +135,6 @@ function renderPages(pages) {
     `;
 
     } else {
-
-        const magazineTitle =
-            localStorage.getItem("magazineTitle") || "Untitled Magazine";
-
-        const magazineDescription =
-            localStorage.getItem("magazineDescription") || "";
-
         const cover =
             document.createElement("div");
 
@@ -335,9 +274,6 @@ function renderPages(pages) {
                 if (!confirmDelete) return;
 
                 const index = button.dataset.index;
-
-                let pages =
-                    JSON.parse(localStorage.getItem("pages")) || [];
 
                 pages.splice(index, 1);
 
