@@ -109,7 +109,7 @@ def create_magazine():
 @app.route("/pages", methods=["POST"])
 def add_page():
 
-    data = request.get_json()
+    data = request.json
 
     cursor.execute("""
         INSERT INTO pages (
