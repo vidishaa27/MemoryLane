@@ -105,6 +105,10 @@ MemoryLane/
 - Collaborative editing
 - AI-assisted page design
 
+## Live Demo
+
+https://memorylane-g6c3.onrender.com/
+
 ## Contributing
 
 Contributions, ideas, and feedback are welcome. Feel free to open an issue or submit a pull request.
