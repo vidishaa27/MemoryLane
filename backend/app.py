@@ -225,71 +225,25 @@ def update_page(page_id):
     }
 
 
-@app.route("/page/<int:page_id>", methods=["DELETE"])
-def delete_page(page_id):
+@app.route("/magazine/<int:magazine_id>", methods=["DELETE"])
+def delete_magazine(magazine_id):
 
+    # Delete all pages belonging to this magazine first
     cursor.execute("""
         DELETE FROM pages
+        WHERE magazine_id = ?
+    """, (magazine_id,))
+
+    # Delete the magazine
+    cursor.execute("""
+        DELETE FROM magazines
         WHERE id = ?
-    """, (page_id,))
+    """, (magazine_id,))
 
     connection.commit()
 
     return {
-        "message": "Page deleted successfully!"
-    }
-
-@app.route("/stats", methods=["GET"])
-def get_stats():
-
-    cursor.execute(
-        "SELECT COUNT(*) FROM magazines"
-    )
-
-    magazine_count = cursor.fetchone()[0]
-
-    cursor.execute(
-        "SELECT COUNT(*) FROM pages"
-    )
-
-    page_count = cursor.fetchone()[0]
-
-    cursor.execute("""
-        SELECT COUNT(*)
-        FROM pages
-        WHERE spotify_link IS NOT NULL
-        AND spotify_link != ''
-    """)
-
-    song_count = cursor.fetchone()[0]
-
-    return {
-        "magazines": magazine_count,
-        "pages": page_count,
-        "songs": song_count
-    }
-
-@app.route("/page/<int:page_id>", methods=["GET"])
-def get_page(page_id):
-
-    cursor.execute("""
-        SELECT * FROM pages
-        WHERE id = ?
-    """, (page_id,))
-
-    row = cursor.fetchone()
-
-    if row is None:
-        return {"message": "Page not found"}, 404
-
-    return {
-        "id": row[0],
-        "magazine_id": row[1],
-        "page_number": row[2],
-        "title": row[3],
-        "content": row[4],
-        "image_url": row[5],
-        "spotify_link": row[6]
+        "message": "Magazine deleted successfully!"
     }
 
 @app.route("/page/<int:page_id>/move", methods=["PUT"])
@@ -335,7 +289,8 @@ def move_page(page_id):
             ORDER BY page_number ASC
             LIMIT 1
         """, (magazine_id, current_number))
-        neighbor = cursor.fetchone()
+
+    neighbor = cursor.fetchone()
 
     if neighbor is None:
 
@@ -361,6 +316,32 @@ def move_page(page_id):
         "message": "Page moved successfully!"
     }
 
+@app.route("/stats", methods=["GET"])
+def get_stats():
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM magazines"
+    )
+    magazine_count = cursor.fetchone()[0]
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM pages"
+    )
+    page_count = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM pages
+        WHERE spotify_link IS NOT NULL
+        AND spotify_link != ''
+    """)
+    song_count = cursor.fetchone()[0]
+
+    return {
+        "magazines": magazine_count,
+        "pages": page_count,
+        "songs": song_count
+    }
 
 if __name__ == "__main__":
     app.run(debug=True)
