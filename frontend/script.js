@@ -607,3 +607,5 @@ function renderPages(pages) {
                 "magazine.html";
 
         }
+    }
+}
