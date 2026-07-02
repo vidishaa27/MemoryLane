@@ -167,31 +167,80 @@ def get_pages(magazine_id):
     return {
         "pages": pages
     }
-@app.route("/pages/<int:page_id>", methods=["PUT"])
+@app.route("/page/<int:page_id>", methods=["PUT"])
 def update_page(page_id):
 
     data = request.json
 
     cursor.execute("""
         UPDATE pages
+
         SET
-            title = ?,
-            content = ?,
-            image_url = ?,
-            spotify_link = ?
-        WHERE id = ?
+            title=?,
+            content=?,
+            image_url=?,
+            spotify_link=?
+
+        WHERE id=?
     """, (
+
         data["title"],
         data["content"],
         data["image_url"],
         data["spotify_link"],
         page_id
+
     ))
 
     connection.commit()
 
     return {
         "message": "Page updated successfully!"
+    }
+
+
+@app.route("/page/<int:page_id>", methods=["DELETE"])
+def delete_page(page_id):
+
+    cursor.execute("""
+        DELETE FROM pages
+        WHERE id = ?
+    """, (page_id,))
+
+    connection.commit()
+
+    return {
+        "message": "Page deleted successfully!"
+    }
+
+@app.route("/stats", methods=["GET"])
+def get_stats():
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM magazines"
+    )
+
+    magazine_count = cursor.fetchone()[0]
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM pages"
+    )
+
+    page_count = cursor.fetchone()[0]
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM pages
+        WHERE spotify_link IS NOT NULL
+        AND spotify_link != ''
+    """)
+
+    song_count = cursor.fetchone()[0]
+
+    return {
+        "magazines": magazine_count,
+        "pages": page_count,
+        "songs": song_count
     }
 
 @app.route("/page/<int:page_id>", methods=["GET"])
@@ -215,6 +264,75 @@ def get_page(page_id):
         "content": row[4],
         "image_url": row[5],
         "spotify_link": row[6]
+    }
+
+@app.route("/page/<int:page_id>/move", methods=["PUT"])
+def move_page(page_id):
+
+    data = request.json
+
+    direction = data["direction"]
+
+    cursor.execute("""
+    SELECT id, magazine_id, page_number
+    FROM pages
+    WHERE id = ?
+""", (page_id,))
+
+    current = cursor.fetchone()
+
+    if current is None:
+        return {"message": "Page not found"}, 404
+
+    current_id = current[0]
+    magazine_id = current[1]
+    current_number = current[2]
+
+    if direction == "up":
+
+        cursor.execute("""
+            SELECT id, page_number
+            FROM pages
+            WHERE magazine_id = ?
+            AND page_number < ?
+            ORDER BY page_number DESC
+            LIMIT 1
+        """, (magazine_id, current_number))
+
+    else:
+
+        cursor.execute("""
+            SELECT id, page_number
+            FROM pages
+            WHERE magazine_id = ?
+            AND page_number > ?
+            ORDER BY page_number ASC
+            LIMIT 1
+        """, (magazine_id, current_number))
+        neighbor = cursor.fetchone()
+
+    if neighbor is None:
+
+        return {
+            "message": "Cannot move further."
+        }
+    neighbor_id = neighbor[0]
+    neighbor_number = neighbor[1]
+
+    cursor.execute(
+        "UPDATE pages SET page_number=? WHERE id=?",
+        (neighbor_number, current_id)
+    )
+
+    cursor.execute(
+        "UPDATE pages SET page_number=? WHERE id=?",
+        (current_number, neighbor_id)
+    )
+
+    connection.commit()
+
+    return {
+        "message": "Page moved successfully!"
     }
 
 if __name__ == "__main__":
