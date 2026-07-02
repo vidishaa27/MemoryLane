@@ -10,16 +10,16 @@ Tools like Canva help with general design but don't offer a dedicated experience
 
 MemoryLane lets users create their own digital magazines: add pages, write stories, upload photos, embed Spotify songs, and publish the finished magazine to share or read online.
 
-## Features (V1)
+## Features (Version 1)
 
-- User accounts (sign up / log in)
-- Create a magazine
-- Add and organize pages
-- Add text content to pages
-- Add images to pages
-- Add Spotify links to pages
-- Publish a magazine
-- Read a magazine online
+- Create multiple digital magazines
+- Add, edit, and delete pages
+- Attach images to pages
+- Add Spotify song links
+- Reorder pages
+- Dashboard with magazine statistics
+- Export magazines as PDF
+- Persistent SQLite storage
 
 ## Tech Stack
 
@@ -32,24 +32,23 @@ MemoryLane lets users create their own digital magazines: add pages, write stori
 - Flask (Python)
 
 **Database**
-- SQL
+- SQLite
 
 **Deployment**
-- Vercel
+- Render
 
 ## Target Users
 
 Anyone who wants to preserve and revisit memories — life events, friendships, relationships, travel, and personal stories — in a beautiful, magazine-style format.
 
-## Success Criteria (V1)
+## Current Functionality (V1)
 
 A user can:
-- Create an account
 - Create a magazine
 - Add pages
 - Add text and images to pages
 - Add Spotify links
-- Publish and view the magazine online
+- Export magazine as pdf
 
 ## Getting Started
 
@@ -73,29 +72,36 @@ flask run
 
 ```
 MemoryLane/
-├── backend/
-│   ├── app.py            # Flask app and routes
-│   ├── database.db       # SQL database
-│   └── requirements.txt  # Python dependencies
-├── frontend/
-│   ├── create-magazine.html  # Page for creating a magazine
-│   ├── index.html             # Home / landing page
-│   ├── script.js               # Frontend logic
-│   └── style.css               # Styling
-├── .gitignore
-├── image.png
-├── LICENSE
-└── README.md
+│
+├── app.py
+├── database.db
+├── requirements.txt
+├── README.md
+│
+├── static/
+│   ├── style.css
+│   ├── script.js
+│   └── image.png
+│
+├── templates/
+│   ├── index.html
+│   ├── dashboard.html
+│   ├── magazine.html
+│   ├── create-magazine.html
+│   └── create-page.html
+│
+├── screenshots/
+└── LICENSE
 ```
 
 ## Roadmap (Future Features)
+
 
 - Drag-and-drop page editor
 - Magazine templates
 - Spotify song embeds (full player)
 - Custom themes
 - Private/Public magazine visibility
-- PDF export
 - Collaborative editing
 - AI-assisted page design
 
