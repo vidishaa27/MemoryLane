@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_cors import CORS
 import sqlite3
 
@@ -53,9 +53,27 @@ connection.commit()
 
 @app.route("/")
 def home():
-    return {
-        "message": "MemoryLane API Running 🚀"
-    }
+    return render_template("index.html")
+
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route("/create-magazine")
+def create_magazine_page():
+    return render_template("create-magazine.html")
+
+
+@app.route("/create-page")
+def create_page():
+    return render_template("create-page.html")
+
+
+@app.route("/magazine")
+def magazine():
+    return render_template("magazine.html")
+
 
 @app.route("/magazines", methods=["GET"])
 def get_magazines():
