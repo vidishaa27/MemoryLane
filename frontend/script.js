@@ -111,7 +111,6 @@ if (pageForm) {
 
         const pageData = {
             magazine_id: Number(currentMagazineId),
-            page_number: 0,
             title: pageTitle,
             content: pageContent,
             image_url: pageImage,
@@ -189,6 +188,24 @@ async function loadMagazine() {
 
     magazineDescription =
         magazine.description;
+
+}
+
+async function deleteMagazine(id) {
+
+    const confirmDelete =
+        confirm("Delete this magazine?");
+
+    if (!confirmDelete) return;
+
+    await fetch(
+        `http://127.0.0.1:5000/magazines/${id}`,
+        {
+            method: "DELETE"
+        }
+    );
+
+    loadDashboard();
 
 }
 
@@ -434,6 +451,8 @@ function renderPages(pages) {
             const magazines =
                 data.magazines;
 
+            magazinesContainer.innerHTML = "";
+
             const statsResponse =
                 await fetch("http://127.0.0.1:5000/stats");
 
@@ -474,22 +493,28 @@ function renderPages(pages) {
                 card.classList.add("magazine-card");
 
                 card.innerHTML = `
-        <h2>${magazine.title}</h2>
+    <h2>${magazine.title}</h2>
 
-        <p>${magazine.description}</p>
+    <p>${magazine.description}</p>
 
-        <div class="page-actions">
+    <div class="page-actions">
 
-            <button
-                class="song-btn"
-                onclick="openMagazine(${magazine.id})">
-                📖 Open
-            </button>
+        <button
+            class="song-btn"
+            onclick="openMagazine(${magazine.id})">
+            📖 Open
+        </button>
 
-        </div>
-    `;
+        <button
+            class="delete-btn"
+            onclick="deleteMagazine(${magazine.id})">
+            🗑 Delete
+        </button>
 
-                magazinesContainer.appendChild(card);
+    </div>
+`;
+
+            magazinesContainer.appendChild(card);
 
             });
         }
