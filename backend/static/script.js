@@ -1,5 +1,6 @@
+console.log("script.js loaded");//debugging line
 const form = document.getElementById('magazineForm');
-
+console.log("1");//debugging line
 if (form) {
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -28,12 +29,16 @@ if (form) {
     });
 }
 
+console.log("2");//debugging line
+
 const titleDisplay = document.getElementById('magazineTitle');
 
 const descriptionDisplay = document.getElementById('magazineDescription');
 
 const currentMagazineId =
     localStorage.getItem("currentMagazineId");
+
+console.log("3");//debugging line
 
 if (titleDisplay) {
 
@@ -57,12 +62,13 @@ if (titleDisplay) {
 
 }
 
+console.log("4");//debugging line
 const pageForm =
     document.getElementById("pageForm");
 
 const editingPageId =
     localStorage.getItem("editingPageId");
-
+console.log("5");//debugging line
 if (pageForm) {
 
     if (editingPageId !== null) {
@@ -92,7 +98,6 @@ if (pageForm) {
             });
 
     }
-
     pageForm.addEventListener("submit", function (e) {
         e.preventDefault();
 
@@ -111,7 +116,6 @@ if (pageForm) {
             image_url: pageImage,
             spotify_link: pageSong
         };
-
         const url = editingPageId !== null
             ? `/pages/${editingPageId}`
             : "/pages";
@@ -146,12 +150,13 @@ if (pageForm) {
     });
 }
 
+console.log("6");//debugging line
 const pagesContainer =
     document.getElementById("pagesContainer");
 
 let magazineTitle = "";
 let magazineDescription = "";
-
+console.log("7");//debugging line
 async function loadMagazine() {
 
     const response =
@@ -182,7 +187,7 @@ async function loadMagazine() {
         magazine.description;
 
 }
-
+console.log("8");//debugging line
 async function deleteMagazine(id) {
 
     const confirmDelete =
@@ -200,7 +205,7 @@ async function deleteMagazine(id) {
     loadDashboard();
 
 }
-
+console.log("9");//debugging line
 async function loadPages() {
 
     const response =
@@ -214,13 +219,13 @@ async function loadPages() {
     renderPages(data.pages);
 
 }
-
+console.log("10");//debugging line
 if (pagesContainer) {
 
     initializeMagazine();
 
 }
-
+console.log("11");//debugging line
 async function initializeMagazine() {
 
     await loadMagazine();
@@ -228,7 +233,7 @@ async function initializeMagazine() {
     await loadPages();
 
 }
-
+console.log("12");//debugging line
 function renderPages(pages) {
 
     pagesContainer.innerHTML = "";
@@ -321,7 +326,7 @@ function renderPages(pages) {
 `;
 
             pagesContainer.appendChild(pageDiv);
-
+            console.log("13");//debugging line
             const moveUpBtn =
                 pageDiv.querySelector(".move-up-btn");
 
@@ -346,7 +351,7 @@ function renderPages(pages) {
                 loadPages();
 
             });
-
+            console.log("14");//debugging line
             moveDownBtn.addEventListener("click", async function () {
 
                 await fetch(
@@ -365,7 +370,6 @@ function renderPages(pages) {
                 loadPages();
 
             });
-
 
             if (index === 0) {
                 moveUpBtn.disabled = true;
@@ -393,7 +397,6 @@ function renderPages(pages) {
                     method: "DELETE"
                 }
             );
-
             loadPages();
 
         });
@@ -416,7 +419,6 @@ function renderPages(pages) {
 
                 });
         }
-
         function editPage(pageId) {
 
             localStorage.setItem(
@@ -432,7 +434,10 @@ function renderPages(pages) {
         const magazinesContainer =
             document.getElementById("magazinesContainer");
 
+        console.log("About to call loadDashboard");
         async function loadDashboard() {
+
+            console.log("loadDashboard started");//debugging line
 
             const response =
                 await fetch("/magazines");
@@ -521,6 +526,7 @@ function renderPages(pages) {
 
             loadDashboard();
 
+            console.log(magazinesContainer);//debugging line
         }
 
         const exportBtn = document.getElementById("exportBtn");
@@ -530,7 +536,7 @@ function renderPages(pages) {
             exportBtn.addEventListener("click", exportMagazine);
 
         }
-
+        console.log("13");//debugging line
         async function exportMagazine() {
 
             const magazineId =
@@ -619,16 +625,6 @@ function renderPages(pages) {
 
         }
 
-        function openMagazine(id) {
-
-            localStorage.setItem(
-                "currentMagazineId",
-                id
-            );
-
-            window.location.href =
-                "/magazine";
-
-        }
+        
     }
 }
