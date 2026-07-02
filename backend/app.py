@@ -1,10 +1,55 @@
 from flask import Flask, request
 from flask_cors import CORS
-from database import get_db
+import sqlite3
 
 app = Flask(__name__)
 CORS(app)
-connection, cursor = get_db()
+
+connection = sqlite3.connect(
+    "database.db",
+    check_same_thread=False
+)
+
+cursor = connection.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS magazines (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    title TEXT NOT NULL,
+
+    description TEXT
+
+)
+""")
+
+connection.commit()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS pages (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    magazine_id INTEGER NOT NULL,
+
+    page_number INTEGER,
+
+    title TEXT,
+
+    content TEXT,
+
+    image_url TEXT,
+
+    spotify_link TEXT,
+
+    FOREIGN KEY (magazine_id)
+        REFERENCES magazines(id)
+
+)
+""")
+
+connection.commit()
 
 @app.route("/")
 def home():
@@ -298,24 +343,6 @@ def move_page(page_id):
         "message": "Page moved successfully!"
     }
 
-@app.route("/magazines/<int:magazine_id>", methods=["DELETE"])
-def delete_magazine(magazine_id):
-
-    cursor.execute(
-        "DELETE FROM pages WHERE magazine_id = ?",
-        (magazine_id,)
-    )
-
-    cursor.execute(
-        "DELETE FROM magazines WHERE id = ?",
-        (magazine_id,)
-    )
-
-    connection.commit()
-
-    return {
-        "message": "Magazine deleted successfully!"
-    }
 
 if __name__ == "__main__":
     app.run(debug=True)
