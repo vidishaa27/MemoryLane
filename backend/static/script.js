@@ -281,14 +281,36 @@ function renderPages(pages) {
 
             if (!confirmDelete) return;
 
-            await fetch(
-                `/page/${page.id}`,
-                {
-                    method: "DELETE"
-                }
-            );
+            try {
 
-            initializeMagazine();
+                const response = await fetch(
+                    `/page/${page.id}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    alert(data.message);
+                    return;
+                }
+
+                initializeMagazine();
+
+            } catch (error) {
+
+                console.error(
+                    "Error deleting page:",
+                    error
+                );
+
+                alert(
+                    "Something went wrong while deleting the page."
+                );
+
+            }
 
         });
 
@@ -591,4 +613,191 @@ async function deleteMagazine(id) {
     );
 
     loadDashboard();
+}
+
+const registerForm =
+    document.getElementById("registerForm");
+
+if (registerForm) {
+
+    registerForm.addEventListener(
+        "submit",
+        async function (e) {
+
+            e.preventDefault();
+
+            const username =
+                document.getElementById("username").value;
+
+            const email =
+                document.getElementById("email").value;
+
+            const password =
+                document.getElementById("password").value;
+
+
+            const response =
+                await fetch("/register", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        username: username,
+
+                        email: email,
+
+                        password: password
+
+                    })
+
+                });
+
+
+            const data =
+                await response.json();
+
+
+            const message =
+                document.getElementById(
+                    "registerMessage"
+                );
+
+
+            if (response.ok) {
+
+                message.textContent =
+                    "Account created successfully! Redirecting to login...";
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        "/login";
+
+                }, 1000);
+
+            } else {
+
+                message.textContent =
+                    data.message ||
+                    "Registration failed.";
+
+            }
+
+        }
+    );
+
+}
+
+const loginForm =
+    document.getElementById("loginForm");
+
+if (loginForm) {
+
+    loginForm.addEventListener(
+        "submit",
+        async function (e) {
+
+            e.preventDefault();
+
+
+            const email =
+                document.getElementById("email").value;
+
+            const password =
+                document.getElementById("password").value;
+
+
+            const response =
+                await fetch("/login", {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        email: email,
+
+                        password: password
+
+                    })
+
+                });
+
+
+            const data =
+                await response.json();
+
+
+            const message =
+                document.getElementById(
+                    "loginMessage"
+                );
+
+
+            if (response.ok) {
+
+                message.textContent =
+                    "Login successful! Redirecting...";
+
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        "/dashboard";
+
+                }, 500);
+
+
+            } else {
+
+                message.textContent =
+                    data.message ||
+                    "Login failed.";
+
+            }
+
+        }
+    );
+
+}
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener(
+        "click",
+        async function () {
+
+            const response =
+                await fetch("/logout", {
+
+                    method: "POST"
+
+                });
+
+
+            if (response.ok) {
+
+                window.location.href =
+                    "/login";
+
+            }
+
+        }
+    );
+
 }
