@@ -5,13 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Magazines</title>
-    <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='style.css') }}">
-    <link
-    rel="icon"
-    href="{{ url_for('static', filename='favicon.ico') }}"
-    type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
 
 <body>
@@ -20,6 +15,10 @@
         <a href="/">Home</a>
         <a href="/dashboard">Dashboard</a>
         <a href="/magazine">Reader</a>
+
+        <button id="logoutBtn" class="logout-btn">
+            Logout
+        </button>
     </nav>
 
     <div class="container">
