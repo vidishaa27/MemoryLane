@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session
+from flask import Flask, redirect, request, render_template, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 import sqlite3
@@ -227,22 +227,54 @@ def home():
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect("/login")
+
+    return render_template(
+        "dashboard.html"
+    )
 
 
 @app.route("/create-magazine")
 def create_magazine_page():
-    return render_template("create-magazine.html")
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect("/login")
+
+    return render_template(
+        "create-magazine.html"
+    )
 
 
 @app.route("/create-page")
 def create_page():
-    return render_template("create-page.html")
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect("/login")
+
+    return render_template(
+        "create-page.html"
+    )
 
 
 @app.route("/magazine")
 def magazine():
-    return render_template("magazine.html")
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect("/login")
+
+    return render_template(
+        "magazine.html"
+    )
 
 
 @app.route("/magazines", methods=["GET"])
@@ -773,6 +805,46 @@ def get_stats():
         "magazines": magazine_count,
         "pages": page_count,
         "songs": song_count
+    }
+
+@app.route("/me", methods=["GET"])
+def get_current_user():
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+
+        return {
+            "logged_in": False
+        }
+
+    user_cursor = connection.cursor()
+
+    user_cursor.execute("""
+        SELECT id, username, email
+        FROM users
+        WHERE id = ?
+    """, (user_id,))
+
+    user = user_cursor.fetchone()
+
+    user_cursor.close()
+
+    if user is None:
+
+        session.clear()
+
+        return {
+            "logged_in": False
+        }
+
+    return {
+        "logged_in": True,
+        "user": {
+            "id": user[0],
+            "username": user[1],
+            "email": user[2]
+        }
     }
 
 if __name__ == "__main__":
