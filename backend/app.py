@@ -283,39 +283,53 @@ def get_magazines():
     user_id = session.get("user_id")
 
     if not user_id:
+
         return {
-            "message": "You must be logged in."
+            "message": "Login required."
         }, 401
+
 
     cursor.execute(
         """
-        SELECT id, title, description, created_at
+        SELECT
+            id,
+            title,
+            description
         FROM magazines
         WHERE user_id = ?
+        ORDER BY id DESC
         """,
         (user_id,)
     )
 
+
     rows = cursor.fetchall()
 
+
     magazines = []
+
 
     for row in rows:
 
         magazines.append({
 
-            "id": row[0],
+            "id":
+                row[0],
 
-            "title": row[1],
+            "title":
+                row[1],
 
-            "description": row[2],
-
-            "created_at": row[3]
+            "description":
+                row[2]
 
         })
 
+
     return {
-        "magazines": magazines
+
+        "magazines":
+            magazines
+
     }
 
 @app.route("/magazines", methods=["POST"])
@@ -324,19 +338,26 @@ def create_magazine():
     user_id = session.get("user_id")
 
     if not user_id:
+
         return {
-            "message": "You must be logged in."
+            "message": "Login required."
         }, 401
+
 
     data = request.get_json()
 
     title = data.get("title")
-    description = data.get("description", "")
+
+    description = data.get("description")
+
 
     if not title:
+
         return {
-            "message": "Magazine title is required."
+            "message":
+                "Magazine title is required."
         }, 400
+
 
     cursor.execute(
         """
@@ -355,18 +376,18 @@ def create_magazine():
         )
     )
 
+
     connection.commit()
 
-    magazine_id = cursor.lastrowid
 
     return {
-        "message": "Magazine created successfully!",
-        "magazine": {
-            "id": magazine_id,
-            "user_id": user_id,
-            "title": title,
-            "description": description
-        }
+
+        "message":
+            "Magazine created successfully!",
+
+        "id":
+            cursor.lastrowid
+
     }, 201
 
 @app.route("/magazine/<int:magazine_id>", methods=["DELETE"])
