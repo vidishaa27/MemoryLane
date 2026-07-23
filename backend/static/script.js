@@ -462,6 +462,331 @@ function initializePageForm() {
 
     }
 
+    const pageTitleInput =
+        document.getElementById("pageTitle");
+
+    const previewTitle =
+        document.getElementById("previewTitle");
+
+
+    if (
+        pageTitleInput &&
+        previewTitle
+    ) {
+
+        pageTitleInput.addEventListener(
+            "input",
+            function () {
+
+                if (pageTitleInput.value.trim() === "") {
+
+                    previewTitle.textContent =
+                        "Your Page Title";
+
+                } else {
+
+                    previewTitle.textContent =
+                        pageTitleInput.value;
+
+                }
+
+            }
+        );
+
+    }
+
+    const previewContent =
+        document.getElementById("previewContent");
+
+    if (
+        quill &&
+        previewContent
+    ) {
+
+        quill.on(
+            "text-change",
+            function () {
+
+                const html =
+                    quill.root.innerHTML;
+
+                if (
+                    html.trim() === "" ||
+                    html === "<p><br></p>"
+                ) {
+
+                    previewContent.innerHTML = `
+                    <p>
+                        Start writing your memory...
+                    </p>
+                `;
+
+                } else {
+
+                    previewContent.innerHTML =
+                        html;
+
+                }
+
+            }
+        );
+
+    }
+
+    const pageImageInput =
+        document.getElementById("pageImage");
+
+    const previewImage =
+        document.getElementById("previewImage");
+
+    if (
+        pageImageInput &&
+        previewImage
+    ) {
+
+        pageImageInput.addEventListener(
+            "input",
+            function () {
+
+                const imageUrl =
+                    pageImageInput.value.trim();
+
+                if (imageUrl === "") {
+
+                    previewImage.style.display =
+                        "none";
+
+                    previewImage.src = "";
+
+                } else {
+
+                    previewImage.src =
+                        imageUrl;
+
+                    previewImage.style.display =
+                        "block";
+
+                }
+
+            }
+        );
+
+    }
+
+    const pageSongInput =
+        document.getElementById("pageSong");
+
+    const previewSong =
+        document.getElementById("previewSong");
+
+    if (
+        pageSongInput &&
+        previewSong
+    ) {
+
+        pageSongInput.addEventListener(
+            "input",
+            function () {
+
+                const songUrl =
+                    pageSongInput.value.trim();
+
+                if (songUrl === "") {
+
+                    previewSong.style.display =
+                        "none";
+
+                    previewSong.href = "#";
+
+                } else {
+
+                    previewSong.href =
+                        songUrl;
+
+                    previewSong.style.display =
+                        "inline-block";
+
+                }
+
+            }
+        );
+
+    }
+
+    async function loadEditingPage() {
+        const editingPageId =
+            localStorage.getItem("editingPageId");
+
+        if (editingPageId && quill) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/page/${editingPageId}`
+                    );
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load page"
+                    );
+
+                }
+
+                const page =
+                    await response.json();
+
+
+                // =================================
+                // TITLE
+                // =================================
+
+                const pageTitleInput =
+                    document.getElementById(
+                        "pageTitle"
+                    );
+
+                if (pageTitleInput) {
+
+                    pageTitleInput.value =
+                        page.title || "";
+
+                }
+
+                if (previewTitle) {
+
+                    previewTitle.textContent =
+                        page.title ||
+                        "Your Page Title";
+
+                }
+
+
+                // =================================
+                // CONTENT
+                // =================================
+
+                quill.root.innerHTML =
+                    page.content || "";
+
+                if (previewContent) {
+
+                    previewContent.innerHTML =
+                        page.content ||
+                        `
+                <p>
+                    Start writing your memory...
+                </p>
+                `;
+
+                }
+
+
+                // =================================
+                // IMAGE
+                // =================================
+
+                const pageImageInput =
+                    document.getElementById(
+                        "pageImage"
+                    );
+
+                const previewImage =
+                    document.getElementById(
+                        "previewImage"
+                    );
+
+                if (pageImageInput) {
+
+                    pageImageInput.value =
+                        page.image_url || "";
+
+                }
+
+                if (
+                    previewImage &&
+                    page.image_url
+                ) {
+
+                    previewImage.src =
+                        page.image_url;
+
+                    previewImage.style.display =
+                        "block";
+
+                }
+
+
+                // =================================
+                // SPOTIFY
+                // =================================
+
+                const pageSongInput =
+                    document.getElementById(
+                        "pageSong"
+                    );
+
+                const previewSong =
+                    document.getElementById(
+                        "previewSong"
+                    );
+
+                if (pageSongInput) {
+
+                    pageSongInput.value =
+                        page.spotify_link || "";
+
+                }
+
+                if (
+                    previewSong &&
+                    page.spotify_link
+                ) {
+
+                    previewSong.href =
+                        page.spotify_link;
+
+                    previewSong.style.display =
+                        "inline-block";
+
+                }
+
+
+                // =================================
+                // UPDATE UI
+                // =================================
+
+                document.getElementById(
+                    "pageHeading"
+                ).textContent =
+                    "Edit Page";
+
+
+                document.getElementById(
+                    "pageSubmitBtn"
+                ).textContent =
+                    "Update Page";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error loading page:",
+                    error
+                );
+
+                alert(
+                    "Could not load page."
+                );
+
+            }
+
+        }
+    }
+
+    loadEditingPage();
+
     pageForm.addEventListener("submit", async function (e) {
 
         e.preventDefault();
@@ -971,56 +1296,69 @@ if (magazineForm) {
 
             e.preventDefault();
 
-            console.log(
-                "Magazine form submitted"
-            );
-
-
             const title =
-                document.getElementById("title").value;
+                document.getElementById(
+                    "title"
+                ).value.trim();
 
             const description =
-                document.getElementById("description").value;
+                document.getElementById(
+                    "description"
+                ).value.trim();
 
             const cover =
-                document.getElementById("cover").value;
+                document.getElementById(
+                    "cover"
+                ).value.trim();
+
+
+            if (!title) {
+
+                alert(
+                    "Please enter a magazine title."
+                );
+
+                return;
+
+            }
 
 
             try {
 
                 const response =
-                    await fetch("/magazines", {
+                    await fetch(
+                        "/magazines",
+                        {
 
-                        method: "POST",
+                            method: "POST",
 
-                        headers: {
+                            headers: {
 
-                            "Content-Type":
-                                "application/json"
+                                "Content-Type":
+                                    "application/json"
 
-                        },
+                            },
 
-                        body: JSON.stringify({
+                            body:
+                                JSON.stringify({
 
-                            title: title,
+                                    title:
+                                        title,
 
-                            description: description,
+                                    description:
+                                        description,
 
-                            cover: cover
+                                    cover:
+                                        cover
 
-                        })
+                                })
 
-                    });
+                        }
+                    );
 
 
                 const data =
                     await response.json();
-
-
-                console.log(
-                    "Create magazine response:",
-                    data
-                );
 
 
                 if (!response.ok) {
@@ -1035,10 +1373,13 @@ if (magazineForm) {
                 }
 
 
-                alert(
-                    "Magazine created successfully!"
+                console.log(
+                    "Magazine created:",
+                    data
                 );
 
+
+                // Go to dashboard
 
                 window.location.href =
                     "/dashboard";

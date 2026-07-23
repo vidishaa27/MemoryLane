@@ -31,30 +31,96 @@
 
     </nav>
 
-    <div class="container">
+    <div class="editor-container">
 
-        <h1 id="pageHeading">Create Page</h1>
+        <!-- =========================
+         LEFT SIDE — EDITOR
+    ========================== -->
 
-        <form class="card" id="pageForm">
+        <div class="editor-panel">
 
-            <label>Page Title</label>
-            <input type="text" id="pageTitle">
+            <h1 id="pageHeading">
+                Create Page
+            </h1>
 
-            <label>Page Content</label>
-            <div id="editor"></div>
-            <input type="hidden" id="pageContent">
+            <form id="pageForm">
 
-            <label>Image URL</label>
-            <input type="text" id="pageImage">
+                <label>
+                    Page Title
+                </label>
 
-            <label>Song Link</label>
-            <input type="text" id="pageSong">
+                <input type="text" id="pageTitle" placeholder="Give your memory a title..." required>
 
-            <button type="submit" id="pageSubmitBtn">
-                Add Page
-            </button>
+                <label>
+                    Page Content
+                </label>
 
-        </form>
+                <div id="editor"></div>
+
+                <input type="hidden" id="pageContent">
+
+                <label>
+                    Image URL
+                </label>
+
+                <input type="text" id="pageImage" placeholder="https://example.com/image.jpg">
+
+                <label>
+                    Song Link
+                </label>
+
+                <input type="text" id="pageSong" placeholder="https://open.spotify.com/...">
+
+                <button type="submit" id="pageSubmitBtn">
+
+                    Add Page
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================
+         RIGHT SIDE — PREVIEW
+    ========================== -->
+
+        <div class="preview-panel">
+
+            <h2>
+                Live Preview
+            </h2>
+
+            <div class="preview-page">
+
+                <p class="preview-page-number">
+                    Page 1
+                </p>
+
+                <h1 id="previewTitle">
+                    Your Page Title
+                </h1>
+
+                <img id="previewImage" class="preview-image" style="display: none;" alt="Preview Image">
+
+                <div id="previewContent" class="preview-content">
+
+                    <p>
+                        Start writing your memory...
+                    </p>
+
+                </div>
+
+                <a id="previewSong" class="song-btn" target="_blank" style="display: none;">
+
+                    🎵 Listen to Song
+
+                </a>
+
+            </div>
+
+        </div>
 
     </div>
 
