@@ -178,14 +178,22 @@ function renderPages(pages) {
     if (pages.length === 0) {
 
         pagesContainer.innerHTML = `
-            <div class="page">
-                <h2>No Pages Yet</h2>
+        <div class="page">
 
-                <p>
-                    Start adding memories.
-                </p>
-            </div>
-        `;
+            <h2>No Pages Yet</h2>
+
+            <p>
+                Start adding memories.
+            </p>
+
+            <a
+                href="/create-page"
+                class="primary-btn">
+                + Add New Page
+            </a>
+
+        </div>
+    `;
 
         return;
 
@@ -232,7 +240,9 @@ function renderPages(pages) {
             class="page-image"
             alt="${page.title}">
 
-        <p>${page.content}</p>
+        <div class="page-content">
+            ${page.content}
+        </div>
 
         <a
             href="${page.spotify_link}"
@@ -404,6 +414,54 @@ function initializePageForm() {
 
     }
 
+    let quill = null;
+
+    const editorElement =
+        document.getElementById("editor");
+
+    if (editorElement) {
+
+        quill = new Quill("#editor", {
+
+            theme: "snow",
+
+            placeholder:
+                "Write your memory here...",
+
+            modules: {
+
+                toolbar: [
+
+                    ["bold", "italic", "underline"],
+
+                    [
+                        {
+                            "header": 1
+                        },
+                        {
+                            "header": 2
+                        }
+                    ],
+
+                    [
+                        {
+                            "list": "ordered"
+                        },
+                        {
+                            "list": "bullet"
+                        }
+                    ],
+
+                    ["link"]
+
+                ]
+
+            }
+
+        });
+
+    }
+
     pageForm.addEventListener("submit", async function (e) {
 
         e.preventDefault();
@@ -416,7 +474,7 @@ function initializePageForm() {
                 document.getElementById("pageTitle").value,
 
             content:
-                document.getElementById("pageContent").value,
+                quill.root.innerHTML,
 
             image_url:
                 document.getElementById("pageImage").value,
@@ -565,11 +623,13 @@ async function exportMagazine() {
 
 }
 
-function openMagazine(id) {
+function openMagazine(magazineId) {
+
+    console.log("Opening magazine:", magazineId);
 
     localStorage.setItem(
         "currentMagazineId",
-        id
+        magazineId
     );
 
     window.location.href =
@@ -773,6 +833,104 @@ if (loginForm) {
 
 }
 
+async function updateNavbar() {
+
+    const navLinks =
+        document.getElementById("navLinks");
+
+    if (!navLinks) return;
+
+    try {
+
+        const response =
+            await fetch("/me");
+
+        const data =
+            await response.json();
+
+
+        if (data.logged_in) {
+
+            navLinks.innerHTML = `
+
+                <a href="/">
+                    Home
+                </a>
+
+                <a href="/dashboard">
+                    Dashboard
+                </a>
+
+                <span>
+                    Welcome, ${data.user.username}
+                </span>
+
+                <button
+                    id="logoutBtn"
+                    class="logout-btn"
+                >
+                    Logout
+                </button>
+
+            `;
+
+
+            const logoutBtn =
+                document.getElementById(
+                    "logoutBtn"
+                );
+
+
+            logoutBtn.addEventListener(
+                "click",
+                async function () {
+
+                    await fetch(
+                        "/logout",
+                        {
+                            method: "POST"
+                        }
+                    );
+
+                    window.location.href =
+                        "/";
+
+                }
+            );
+
+        } else {
+
+            navLinks.innerHTML = `
+
+                <a href="/">
+                    Home
+                </a>
+
+                <a href="/login">
+                    Login
+                </a>
+
+                <a href="/register">
+                    Register
+                </a>
+
+            `;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Error checking authentication:",
+            error
+        );
+
+    }
+
+}
+
+updateNavbar();
+
 const logoutBtn =
     document.getElementById("logoutBtn");
 
@@ -794,6 +952,108 @@ if (logoutBtn) {
 
                 window.location.href =
                     "/login";
+
+            }
+
+        }
+    );
+
+}
+
+const magazineForm =
+    document.getElementById("magazineForm");
+
+if (magazineForm) {
+
+    magazineForm.addEventListener(
+        "submit",
+        async function (e) {
+
+            e.preventDefault();
+
+            console.log(
+                "Magazine form submitted"
+            );
+
+
+            const title =
+                document.getElementById("title").value;
+
+            const description =
+                document.getElementById("description").value;
+
+            const cover =
+                document.getElementById("cover").value;
+
+
+            try {
+
+                const response =
+                    await fetch("/magazines", {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body: JSON.stringify({
+
+                            title: title,
+
+                            description: description,
+
+                            cover: cover
+
+                        })
+
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Create magazine response:",
+                    data
+                );
+
+
+                if (!response.ok) {
+
+                    alert(
+                        data.message ||
+                        "Failed to create magazine."
+                    );
+
+                    return;
+
+                }
+
+
+                alert(
+                    "Magazine created successfully!"
+                );
+
+
+                window.location.href =
+                    "/dashboard";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Error creating magazine:",
+                    error
+                );
+
+                alert(
+                    "Something went wrong while creating the magazine."
+                );
 
             }
 
