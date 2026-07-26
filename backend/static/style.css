@@ -38,57 +38,32 @@ nav {
 }
 
 
-/* MemoryLane logo */
-
 nav .logo {
-
     text-decoration: none;
-
     color: #444;
-
     font-size: 26px;
-
     font-weight: bold;
-
 }
 
-
-/* Navigation links */
 
 #navLinks {
-
     display: flex;
-
     align-items: center;
-
     gap: 25px;
-
 }
 
-
-/* Individual links */
 
 #navLinks a {
-
     text-decoration: none;
-
     color: #444;
-
     font-size: 16px;
-
     font-weight: bold;
-
     transition: color 0.2s ease;
-
 }
 
 
-/* Hover effect */
-
 #navLinks a:hover {
-
     color: #a96f5b;
-
 }
 
 
