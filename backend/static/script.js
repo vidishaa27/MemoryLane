@@ -1,6 +1,24 @@
 // --------------------
-// Global Variables
+// Global Helper Functions & Variables
 // --------------------
+
+function escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function sanitizeHTML(html) {
+    if (!html) return "";
+    if (typeof DOMPurify !== "undefined") {
+        return DOMPurify.sanitize(html);
+    }
+    return html;
+}
 
 const pageForm = document.getElementById("pageForm");
 const pagesContainer = document.getElementById("pagesContainer");
@@ -94,9 +112,9 @@ async function loadDashboard() {
             card.classList.add("magazine-card");
 
             card.innerHTML = `
-                <h2>${magazine.title}</h2>
+                <h2>${escapeHTML(magazine.title)}</h2>
 
-                <p>${magazine.description}</p>
+                <p>${escapeHTML(magazine.description)}</p>
 
                 <div class="page-actions">
 
@@ -206,9 +224,9 @@ function renderPages(pages) {
 
     cover.innerHTML = `
 
-        <h1>${magazineTitle}</h1>
+        <h1>${escapeHTML(magazineTitle)}</h1>
 
-        <p>${magazineDescription}</p>
+        <p>${escapeHTML(magazineDescription)}</p>
 
         <a
             href="/create-page"
@@ -227,25 +245,30 @@ function renderPages(pages) {
 
         pageDiv.classList.add("page");
 
+        const cleanTitle = escapeHTML(page.title);
+        const cleanContent = sanitizeHTML(page.content);
+        const cleanImageUrl = escapeHTML(page.image_url);
+        const cleanSpotifyLink = escapeHTML(page.spotify_link);
+
         pageDiv.innerHTML = `
 
         <p class="page-number">
             Page ${index + 1}
         </p>
 
-        <h2>${page.title}</h2>
+        <h2>${cleanTitle}</h2>
 
         <img
-            src="${page.image_url}"
+            src="${cleanImageUrl}"
             class="page-image"
-            alt="${page.title}">
+            alt="${cleanTitle}">
 
         <div class="page-content">
-            ${page.content}
+            ${cleanContent}
         </div>
 
         <a
-            href="${page.spotify_link}"
+            href="${cleanSpotifyLink}"
             target="_blank"
             class="song-btn">
             🎵 Listen to Song
