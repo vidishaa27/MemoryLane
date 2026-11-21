@@ -1,41 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block title %}Login | MemoryLane{% endblock %}
 
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Login | MemoryLane</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-</head>
-
-<body>
-
-    <nav>
-
-        <a href="/" class="logo">
-            MemoryLane
-        </a>
-
-        <div id="navLinks">
-
-            <a href="/">
-                Home
-            </a>
-
-            <a href="/register">
-                Create Account
-            </a>
-
-        </div>
-
-    </nav>
-
-
+{% block content %}
     <main class="auth-container">
 
         <div class="auth-card">
@@ -46,30 +13,21 @@
                 Continue your MemoryLane journey.
             </p>
 
-
             <form id="loginForm">
 
                 <div class="form-group">
-
                     <label for="email">
                         Email
                     </label>
-
                     <input type="email" id="email" placeholder="Enter your email" required>
-
                 </div>
 
-
                 <div class="form-group">
-
                     <label for="password">
                         Password
                     </label>
-
                     <input type="password" id="password" placeholder="Enter your password" required>
-
                 </div>
-
 
                 <button type="submit" class="primary-btn">
                     Login
@@ -77,9 +35,7 @@
 
             </form>
 
-
             <p id="loginMessage"></p>
-
 
             <p class="auth-footer">
                 Don't have an account?
@@ -91,10 +47,4 @@
         </div>
 
     </main>
-
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}

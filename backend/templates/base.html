@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MemoryLane{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    {% block head_extra %}{% endblock %}
+</head>
+
+<body>
+
+    <nav>
+        <a href="/" class="logo">
+            MemoryLane
+        </a>
+
+        <div id="navLinks">
+            <a href="/login">
+                Login
+            </a>
+            <a href="/register">
+                Register
+            </a>
+            <a href="/dashboard">
+                Dashboard
+            </a>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    {% block footer %}{% endblock %}
+
+    {% block scripts_extra %}{% endblock %}
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='common.js') }}"></script>
+</body>
+
+</html>

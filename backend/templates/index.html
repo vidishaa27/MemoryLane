@@ -1,40 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MemoryLane</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-</head>
+{% block title %}MemoryLane{% endblock %}
 
-<body>
-
-    <nav>
-
-        <a href="/" class="logo">
-            MemoryLane
-        </a>
-
-        <div id="navLinks">
-
-            <a href="/login">
-                Login
-            </a>
-
-            <a href="/register">
-                Register
-            </a>
-
-            <a href="/dashboard">
-                Dashboard
-            </a>
-
-        </div>
-
-    </nav>
-
+{% block content %}
     <section class="hero">
         <h1>MemoryLane</h1>
 
@@ -46,7 +14,4 @@
             Create Magazine
         </a>
     </section>
-
-</body>
-
-</html>
+{% endblock %}

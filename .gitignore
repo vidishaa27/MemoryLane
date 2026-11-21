@@ -1,3 +1,14 @@
+# Environment & credentials
+.env
+.env.*
+!.env.example
+
+# Databases & backups
+*.db
+*.db.bak
+database.db
+instance/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

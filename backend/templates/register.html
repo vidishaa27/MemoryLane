@@ -1,41 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block title %}Create Account | MemoryLane{% endblock %}
 
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Create Account | MemoryLane</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-</head>
-
-<body>
-
-    <nav>
-
-        <a href="/" class="logo">
-            MemoryLane
-        </a>
-
-        <div id="navLinks">
-
-            <a href="/">
-                Home
-            </a>
-
-            <a href="/register">
-                Create Account
-            </a>
-
-        </div>
-
-    </nav>
-
-
+{% block content %}
     <main class="auth-container">
 
         <div class="auth-card">
@@ -46,41 +13,28 @@
                 Start preserving your memories.
             </p>
 
-
             <form id="registerForm">
 
                 <div class="form-group">
-
                     <label for="username">
                         Username
                     </label>
-
                     <input type="text" id="username" placeholder="Enter your username" required>
-
                 </div>
 
-
                 <div class="form-group">
-
                     <label for="email">
                         Email
                     </label>
-
                     <input type="email" id="email" placeholder="Enter your email" required>
-
                 </div>
 
-
                 <div class="form-group">
-
                     <label for="password">
                         Password
                     </label>
-
                     <input type="password" id="password" placeholder="Create a password" required>
-
                 </div>
-
 
                 <button type="submit" class="primary-btn">
                     Create Account
@@ -88,9 +42,7 @@
 
             </form>
 
-
             <p id="registerMessage"></p>
-
 
             <p class="auth-footer">
                 Already have an account?
@@ -102,10 +54,4 @@
         </div>
 
     </main>
-
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}

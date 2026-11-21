@@ -1,50 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Page</title>
-    <!-- Quill CSS -->
+{% block title %}Create Page{% endblock %}
 
+{% block head_extra %}
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-</head>
-
-<body>
-
-    <nav>
-
-        <a href="/" class="logo">
-            MemoryLane
-        </a>
-
-        <div id="navLinks">
-
-            <a href="/login">
-                Login
-            </a>
-
-            <a href="/register">
-                Register
-            </a>
-
-            <a href="/dashboard">
-                Dashboard
-            </a>
-
-        </div>
-
-    </nav>
-
+{% block content %}
     <div class="editor-container">
 
         <!-- =========================
          LEFT SIDE — EDITOR
-    ========================== -->
-
+        ========================== -->
         <div class="editor-panel">
 
             <h1 id="pageHeading">
@@ -80,20 +47,16 @@
                 <input type="text" id="pageSong" placeholder="https://open.spotify.com/...">
 
                 <button type="submit" id="pageSubmitBtn">
-
                     Add Page
-
                 </button>
 
             </form>
 
         </div>
 
-
         <!-- =========================
          RIGHT SIDE — PREVIEW
-    ========================== -->
-
+        ========================== -->
         <div class="preview-panel">
 
             <h2>
@@ -113,17 +76,13 @@
                 <img id="previewImage" class="preview-image" style="display: none;" alt="Preview Image">
 
                 <div id="previewContent" class="preview-content">
-
                     <p>
                         Start writing your memory...
                     </p>
-
                 </div>
 
                 <a id="previewSong" class="song-btn" target="_blank" style="display: none;">
-
                     🎵 Listen to Song
-
                 </a>
 
             </div>
@@ -131,12 +90,9 @@
         </div>
 
     </div>
+{% endblock %}
 
+{% block scripts_extra %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script src="{{ url_for('static', filename='common.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}
